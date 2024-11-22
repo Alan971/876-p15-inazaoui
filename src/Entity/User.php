@@ -11,18 +11,17 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
-class User 
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue()]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(unique:true)]
     private ?int $id = null;
 
     #[ORM\Column]
     private bool $admin = false;
 
-    #[ORM\Column(length: 255, type:'text', nullable: false)]
+    #[ORM\Column(length: 255, type:'text', nullable: false, unique: true)]
     private ?string $name;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -49,6 +48,7 @@ class User
     {
         $this->medias = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -137,5 +137,12 @@ class User
         $this->password = $password;
 
         return $this;
+    }
+    public function eraseCredentials(): void
+    {
+    }
+    public function getUserIdentifier(): string
+    {
+        return $this->name;
     }
 }

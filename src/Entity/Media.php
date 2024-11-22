@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 class Media
@@ -26,6 +27,10 @@ class Media
     #[ORM\Column]
     private string $title;
 
+    #[MapUploadedFile([
+        new Assert\File(mimeTypes: ['image/png', 'image/jpeg']),
+        new Assert\Image(maxWidth: 3840, maxHeight: 2160)
+    ])]
     private ?UploadedFile $file = null;
 
     public function getId(): ?int

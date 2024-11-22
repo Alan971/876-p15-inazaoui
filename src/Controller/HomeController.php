@@ -40,7 +40,7 @@ class HomeController extends AbstractController
     }
     //il manque le {id} dans le route intentinellement pour le passage version
     //à modifier par la suite
-    #[Route("/portfolio/", name:"portfolio")]
+    #[Route("/portfolio/{id}", name:"portfolio")]
     public function portfolio(EntityManagerInterface $em, ?int $id = null) : Response
     {
         $albums = $em->getRepository(Album::class)->findAll();
