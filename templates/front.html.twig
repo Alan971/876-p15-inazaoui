@@ -16,6 +16,7 @@
                     <a href="{{ path('home') }}">
                         <img src="{{ asset('images/logo.png') }}" alt="Ina Zaoui">
                     </a>
+                     {% if app.user %} <p class="nav-link">Bienvenue {{ app.user.name }} </p> {% endif %}
                     <ul class="nav">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('guests') }}">Invités</a>

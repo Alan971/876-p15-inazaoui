@@ -12,6 +12,7 @@
         <tr>
             <th>Nom</th>
             <th>Actions</th>
+            <th>Rôle(s)</th>
             <th>Portfolio</th>
         </tr>
         </thead>
@@ -22,6 +23,9 @@
                 <td>
                     <a href="{{ path('admin_guest_lock', {id: guest.id}) }}" class="btn btn-warning">{% if guest.access %}Bloquer{% else %}Débloquer{% endif %}</a>
                     <a href="{{ path('admin_guest_delete', {id: guest.id}) }}" class="btn btn-danger">Supprimer</a>
+                </td>
+                <td>
+                    <p> {{ guest.roles|join(', ') }}</p>
                 </td>
                 <td>
                     <a href="{{ path('portfolio', {id: guest.id}) }}" class="btn btn-primary">Visualiser</a>

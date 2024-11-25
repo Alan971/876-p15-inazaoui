@@ -9,7 +9,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\User;
 use App\Form\UserType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_ADMIN')]
 class GuestsController extends AbstractController
 {
     #[Route('/admin/guests', name: 'admin_guests_index')]
@@ -48,13 +51,15 @@ class GuestsController extends AbstractController
     }
 
     #[Route('/admin/guests/add', name: 'admin_guest_add')]
-    public function add(EntityManagerInterface $em, Request $request): Response
+    public function add(EntityManagerInterface $em, Request $request, UserPasswordHasherInterface $passwordHasher): Response
     {
         $guest = new User();
         $form = $this->createForm(UserType::class, $guest);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            $guest->setPassword($passwordHasher->hashPassword($guest, $guest->getPassword()));
             $em->persist($guest);
             $em->flush();
             return $this->redirectToRoute('admin_guests_index');

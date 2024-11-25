@@ -12,8 +12,9 @@ use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
 class MediaController extends AbstractController
 {
     private ValidatorInterface $validator;
@@ -59,6 +60,9 @@ class MediaController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$this->isGranted('ROLE_ADMIN')) {
+                $media->setUser($this->getUser());
+            }
+            else {
                 $media->setUser($this->getUser());
             }
             $file = $form->get('file')->getData();

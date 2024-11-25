@@ -9,6 +9,15 @@
 {% endblock %}
 
 {% block body %}
+{# message flash pour les compte bloqués#}
+    {% for type, messages in app.session.flashbag.all() %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     <div class="container">
         <div class="row min-vh-100 align-items-center justify-content-center">
             <nav class="col-md-6 col-lg-4">
