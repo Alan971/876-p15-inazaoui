@@ -21,7 +21,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $admin = false;
 
-    #[ORM\Column(length: 255, type:'text', nullable: false, unique: true)]
+    #[ORM\Column(length: 125, nullable: false, unique: true)]
     private ?string $name;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -32,6 +32,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column()]
     private array $roles = [];
+
+    #[ORM\Column()]
+    private ?bool $access = false;
 
     /**
      * @var string The hashed password
@@ -144,5 +147,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->name;
+    }
+    public function getAccess(): ?bool
+    {
+        return $this->access;
+    }
+    public function setAccess(bool $access): void
+    {
+        $this->access = $access;
     }
 }

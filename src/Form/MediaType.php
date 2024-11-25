@@ -30,8 +30,9 @@ class MediaType extends AbstractType
                             'image/png',
                             'image/jpeg',
                             'image/jpg',
+                            'image/webp',
                         ],
-                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (PNG, JPEG, JPG).',
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (PNG, JPEG, JPG, WEBP).',
                         'maxSizeMessage'=> 'La taille du fichier dépasse la limite autorisée ({{ limit }}Mo).',
                     ]),
                     new Assert\Image([

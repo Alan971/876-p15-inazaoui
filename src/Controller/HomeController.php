@@ -21,7 +21,6 @@ class HomeController extends AbstractController
     #[Route("/guests", name:"guests")]
     public function guests(EntityManagerInterface $em) : Response
     {
-        //$guests = $this->getDoctrine()->getRepository(User::class)->findBy(['admin' => false]);
         $guests = $em->getRepository(User::class)->findBy(['admin' => false]);
         return $this->render('front/guests.html.twig', [
             'guests' => $guests
@@ -32,7 +31,6 @@ class HomeController extends AbstractController
     #[Route("/guest/{id}", name:"guest")]
     public function guest(int $id, EntityManagerInterface $em) : Response
     {
-        // $guest = $this->getDoctrine()->getRepository(User::class)->find($id);
         $guest = $em->getRepository(User::class)->find($id);
         return $this->render('front/guest.html.twig', [
             'guest' => $guest

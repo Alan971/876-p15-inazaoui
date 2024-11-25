@@ -24,7 +24,31 @@ class AppFixtures extends Fixture
         $userIna->setAdmin(true);
         $userIna->setDescription('Ina');
         $userIna->setRoles(['ROLE_ADMIN']);
+        $userIna->setAccess(true);
         $manager->persist($userIna);
+
+        // Création de 2 guests
+        $userGuest1 = new User();
+        $userGuest1->setName('Guest1');
+        $userGuest1->setEmail('guest1@gmail.com');
+        $hashedPassword = $this->passwordHasher->hashPassword($userGuest1, 'test');
+        $userGuest1->setPassword($hashedPassword);
+        $userGuest1->setAdmin(false);
+        $userGuest1->setDescription('Guest1');
+        $userGuest1->setRoles(['ROLE_USER']);
+        $userGuest1->setAccess(true);
+        $manager->persist($userGuest1);
+
+        $userGuest2 = new User();
+        $userGuest2->setName('Guest2');
+        $userGuest2->setEmail('guest2@gmail.com');
+        $hashedPassword = $this->passwordHasher->hashPassword($userGuest2, 'test');
+        $userGuest2->setPassword($hashedPassword);
+        $userGuest2->setAdmin(false);
+        $userGuest2->setDescription('Guest2');
+        $userGuest2->setRoles(['ROLE_USER']);
+        $userGuest2->setAccess(false);   
+        $manager->persist($userGuest2);
 
         $manager->flush();
     }

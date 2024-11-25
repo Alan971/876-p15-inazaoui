@@ -69,7 +69,7 @@ class MediaController extends AbstractController
 
             $violations = $this->validator->validate($file, [
                 new Assert\File([
-                    'mimeTypes' => ['image/png', 'image/jpeg', 'image/jpg'],
+                    'mimeTypes' => ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'],
                     'maxSize' => '2M',
                 ]),
                 new Assert\Image([
