@@ -27,9 +27,7 @@ class MediaController extends AbstractController
     #[Route("/admin/media", name:"admin_media_index")]
     public function index(Request $request, EntityManagerInterface $em)
     {
-
         $page = $request->query->getInt('page', 1);
-
         $criteria = [];
 
         if (!$this->isGranted('ROLE_ADMIN')) {
@@ -62,9 +60,7 @@ class MediaController extends AbstractController
             if (!$this->isGranted('ROLE_ADMIN')) {
                 $media->setUser($this->getUser());
             }
-            else {
-                $media->setUser($this->getUser());
-            }
+
             $file = $form->get('file')->getData();
 
             if (!$file){
