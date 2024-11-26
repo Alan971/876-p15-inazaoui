@@ -2,36 +2,32 @@
 
 namespace App\EventListener;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\Security;
+use App\Service\AddFlashService;
 
 final class LockedAccountListener
 {
-    private $security;
-
-    public function __construct(Security $security)
+    public function __construct(private AddFlashService $flashService, private TokenStorageInterface $tokenStorage)
     {
-        $this->security = $security;
+        $this->tokenStorage = $tokenStorage;
+        $this->flashService = $flashService;
     }
 
     #[AsEventListener(event: LoginSuccessEvent::class)]
     public function onLoginSuccessEvent(LoginSuccessEvent $event): void
     {
         $user = $event->getUser();
-
-        // mon code tout simple
         if ($user instanceof UserInterface && $user->getAccess() === false) {
-            
-
+            // Retirer le jeton de sécurité pour déconnecter l'utilisateur
+            $this->tokenStorage->setToken(null);
             // Déconnecter l'utilisateur et rediriger
-            $this->security->getTokenStorage()->setToken(null); // Déconnecte l'utilisateur
             $event->getRequest()->getSession()->invalidate(); // Invalide la session
             $event->getRequest()->setSession($event->getRequest()->getSession()); // Rafraîchit la session
-
-            $this->security->getSession()->getFlashBag()->add('danger', 'Votre compte est bloqué, veuillez contacter votre administrateur.');
-            // throw new \Exception('Account ' .  $user->getName() . ' is locked, please contact your administrator.');
+            $this->flashService->addFlash('danger', 'Votre compte ' .  $user->getName() . ' est bloqué, veuillez contacter votre administrateur.');
+            $event->setResponse(new \Symfony\Component\HttpFoundation\RedirectResponse('/login'));
         }
     }
 }
