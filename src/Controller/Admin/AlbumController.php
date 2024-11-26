@@ -62,9 +62,14 @@ class AlbumController extends AbstractController
     #[Route("/admin/album/delete/{id}", name:"admin_album_delete")]
     public function delete(int $id, EntityManagerInterface $em)
     {
-        $media = $em->getRepository(Album::class)->find($id);
-        $em->remove($media);
-        $em->flush();
+        if(!empty($em->getRepository(Media::class)->findByAlbum($id))) {
+            $this->addFlash('danger', 'Cet album est lié à des médias, veuillez les supprimer avant de supprimer cet album');
+        }
+        else {
+            $media = $em->getRepository(Album::class)->find($id);
+            $em->remove($media);
+            $em->flush();
+        }
 
         return $this->redirectToRoute('admin_album_index');
     }

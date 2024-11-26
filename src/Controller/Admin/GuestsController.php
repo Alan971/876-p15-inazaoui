@@ -24,7 +24,6 @@ class GuestsController extends AbstractController
         ]);
     }
 
-
     #[Route('/admin/guests/lock/{id}', name: 'admin_guest_lock')]
     public function lock(EntityManagerInterface $em, int $id): Response
     {
