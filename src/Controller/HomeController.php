@@ -22,23 +22,29 @@ class HomeController extends AbstractController
     #[Route("/guests", name:"guests")]
     public function guests(EntityManagerInterface $em) : Response
     {
-        $guests = $em->getRepository(User::class)->findBy(['admin' => false]);
+        $guests = $em->getRepository(User::class)->findBy(['admin' => false, 'access' => true]);
         return $this->render('front/guests.html.twig', [
             'guests' => $guests
         ]);
     }
 
-
     #[Route("/guest/{id}", name:"guest")]
     public function guest(int $id, EntityManagerInterface $em) : Response
     {
         $guest = $em->getRepository(User::class)->find($id);
+        if (!$guest) {
+            $this->addFlash('danger', 'utilisateur non trouvé');
+            return $this->redirectToRoute('guests');
+        }
+        if ($guest->getAccess() === false) {
+            $this->addFlash('danger', 'Le travail de cet invité n\'est plus disponible');
+            return $this->redirectToRoute('guests');
+        }
         return $this->render('front/guest.html.twig', [
             'guest' => $guest
         ]);
     }
-    //il manque le {id} dans le route intentinellement pour le passage version
-    //à modifier par la suite
+
     #[Route("/portfolio/{id}", name:"portfolio")]
     public function portfolio(EntityManagerInterface $em, ?int $id = null) : Response
     {
@@ -47,10 +53,11 @@ class HomeController extends AbstractController
         //remplacement de la définition de l'utilisateur par l'utilisateur connecté
         // $user = $em->getRepository(User::class)->findOneByAdmin(true);
         $user = $this->getUser();
+        $usersNotLocked = $em->getRepository(User::class)->findByAccess(true);
 
         $medias = $album
-            ? $em->getRepository(Media::class)->findByAlbum($album)
-            : $em->getRepository(Media::class)->findByUser($user);
+            ? $em->getRepository(Media::class)->findByAlbumUserNotLocked($album, $usersNotLocked)
+            : $em->getRepository(Media::class)->findByUserNotLocked($user);
         return $this->render('front/portfolio.html.twig', [
             'albums' => $albums,
             'album' => $album,

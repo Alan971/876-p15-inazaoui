@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Media;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\Album;
 
 /**
  * @extends ServiceEntityRepository<Media>
@@ -21,6 +23,39 @@ class MediaRepository extends ServiceEntityRepository
         parent::__construct($registry, Media::class);
     }
 
+
+    /**
+     * Récupère tous les médias d'un utilisateur qu n'est pas bloqué
+     *
+     * @param UserInterface $user
+     * @return array    Returns an array of Media objects
+     */ 
+    public function findByUserNotLocked(UserInterface $user): array
+    {
+        if ($user->getAccess() === true) {
+            return self::findByUser($user);
+        }
+        return [];
+    }
+
+    /**
+     * Récupère tous les médias d'un album dont les auteurs ne sont pas bloqués
+     *
+     * @param Album $album
+     * @param array $users
+     * @return array
+     */
+    public function findByAlbumUserNotLocked(Album $album,array $users): array
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.album = :album')
+            ->andWhere('m.user IN (:users)')
+            ->setParameter('album', $album)
+            ->setParameter('users', $users)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 //    /**
 //     * @return Media[] Returns an array of Media objects
 //     */
