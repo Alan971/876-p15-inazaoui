@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\DomCrawler\Crawler;
 use App\Tests\Functional\FunctionalTestCase;
+use App\tests\ConstForTest;
 
 class loginTest extends FunctionalTestCase
 {
@@ -19,8 +17,8 @@ class loginTest extends FunctionalTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertSelectorTextContains('h1', 'Connexion');
 
-        $this->login('Ina', 'test');
-        
+        $this->login(ConstForTest::USERNAME, ConstForTest::PASSWORD);
+
         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
         self::assertTrue($authorizationChecker->isGranted('IS_AUTHENTICATED'));
 
