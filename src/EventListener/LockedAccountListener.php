@@ -19,6 +19,7 @@ final class LockedAccountListener
     #[AsEventListener(event: LoginSuccessEvent::class)]
     public function onLoginSuccessEvent(LoginSuccessEvent $event): void
     {
+        /** @var \App\Entity\User $user */
         $user = $event->getUser();
         if ($user instanceof UserInterface && $user->getAccess() === false) {
             // Retirer le jeton de sécurité pour déconnecter l'utilisateur

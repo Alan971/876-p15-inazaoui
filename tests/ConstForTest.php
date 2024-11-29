@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\tests;
+namespace App\Tests;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ConstForTest
 {
-
     const IMGPATH = __DIR__ . '/imgTest/test1.png';
     const IMGNAME = 'test1.png';
     const MEDIA_TITLE = 'test';

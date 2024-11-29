@@ -13,6 +13,8 @@ use App\Entity\Album;
  *
  * @method Media|null find($id, $lockMode = null, $lockVersion = null)
  * @method Media|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Media[]    findByUser(UserInterface $user)
+ * @method Media[]    findByAlbum(int $albumId)
  * @method Media[]    findAll()
  * @method Media[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -32,6 +34,7 @@ class MediaRepository extends ServiceEntityRepository
      */ 
     public function findByUserNotLocked(?UserInterface $user): array
     {
+        /** @var \App\Entity\User $user */
         if ($user instanceof UserInterface) {
             if ($user->getAccess() === true) {
                 return self::findByUser($user);

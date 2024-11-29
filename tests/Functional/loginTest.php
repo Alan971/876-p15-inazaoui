@@ -6,7 +6,7 @@ namespace App\Tests\Functional;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use App\Tests\Functional\FunctionalTestCase;
-use App\tests\ConstForTest;
+use App\Tests\ConstForTest;
 
 class loginTest extends FunctionalTestCase
 {

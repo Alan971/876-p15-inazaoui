@@ -7,7 +7,6 @@ namespace App\Tests\Functional;
 use App\Tests\Functional\FunctionalTestCase;
 use App\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use App\Tests\ConstForTest;
 use App\DataFixtures\AppFixtures;
 use Doctrine\Persistence\ObjectManager;
 

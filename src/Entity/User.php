@@ -10,6 +10,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+
+/**
+ * @method bool isAdmin()
+ * @method ?bool getAccess()
+ * @method string getName()
+ * @method string getEmail()
+ * @method string getDescription()
+ * @method array getRoles()
+ */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {

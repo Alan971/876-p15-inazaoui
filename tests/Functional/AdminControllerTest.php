@@ -8,7 +8,7 @@ use App\Tests\Functional\FunctionalTestCase;
 use App\Entity\Album;
 use App\Entity\Media;
 use App\Entity\User;
-use App\tests\ConstForTest;
+use App\Tests\ConstForTest;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -104,7 +104,8 @@ class AdminControllerTest extends FunctionalTestCase
         $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Ajouter')->form();
         $form['media[title]'] = ConstForTest::MEDIA_TITLE;
-        $form['media[user]'] = 1;
+        $form['media[user]'] = "1";
+        /** @var UploadedFile $uploadedFile */
         $uploadedFile = ConstForTest::getUploadedFile(true);
         $form['media[file]'] = $uploadedFile;
         $this->client->submit($form);
@@ -127,6 +128,7 @@ class AdminControllerTest extends FunctionalTestCase
         $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Ajouter')->form();
         $form['media[title]'] = ConstForTest::MEDIA_TITLE;
+        /** @var UploadedFile $uploadedFile */
         $uploadedFile = ConstForTest::getUploadedFile(true);
         $form['media[file]'] = $uploadedFile;
         $this->client->submit($form);
@@ -152,7 +154,7 @@ class AdminControllerTest extends FunctionalTestCase
         $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Ajouter')->form();
         $form['media[title]'] = ConstForTest::MEDIA_TITLE;
-        $form['media[user]'] = 1;
+        $form['media[user]'] = '1';
         $this->client->submit($form);
         $this->assertEquals(500, $this->client->getResponse()->getStatusCode());
     }
@@ -184,7 +186,7 @@ class AdminControllerTest extends FunctionalTestCase
         $form['user[name]'] = ConstForTest::NEW_USERNAME;
         $form['user[email]'] = ConstForTest::USER_MAIL_ADRESS;
         $form['user[description]'] = ConstForTest::DESCRIPTION;
-        $form['user[access]'] = true;
+        $form['user[access]'] = '1';
         $form['user[password][first]'] = ConstForTest::PASSWORD;
         $form['user[password][second]'] = ConstForTest::PASSWORD;
         $this->client->submit($form);
