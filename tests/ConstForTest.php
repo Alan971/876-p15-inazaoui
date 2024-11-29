@@ -16,6 +16,8 @@ class ConstForTest
     const ALBUM_NAME = 'test';
     const USERNAME = 'Ina';
     const PASSWORD = 'test';
+    const USERNAME_GUEST = 'Guest1';
+    const NEW_PASSWORD = 'testNew';
     const NEW_USERNAME = 'NewName';
     const USER_MAIL_ADRESS = 'abc@gmail.com';
 

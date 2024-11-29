@@ -84,14 +84,22 @@ class AdminControllerTest extends FunctionalTestCase
 
     public function testAdminMedia()
     {
-        //test d'accès à index des média
+        //test d'accès à index des média en admin
         $this->login(ConstForTest::USERNAME, ConstForTest::PASSWORD);
         $crawler = $this->client->request('GET', '/admin/media');
         $this->assertResponseIsSuccessful();
         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
         self::assertTrue($authorizationChecker->isGranted('ROLE_ADMIN'));
 
-        // Test ADD  média
+        // Test index des médias en role user
+        $this->login(ConstForTest::USERNAME_GUEST, ConstForTest::PASSWORD);
+        $crawler = $this->client->request('GET', '/admin/media');
+        $this->assertResponseIsSuccessful();
+        $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
+        self::assertTrue($authorizationChecker->isGranted('ROLE_USER'));
+
+        // Test ADD  média en admin
+        $this->login(ConstForTest::USERNAME, ConstForTest::PASSWORD);
         $crawler = $this->client->request('GET', '/admin/media/add');
         $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Ajouter')->form();
@@ -113,6 +121,26 @@ class AdminControllerTest extends FunctionalTestCase
         $media = $this->getEntityManager()->getRepository(Media::class)->find($media->getId());
         self::assertNull($media);
 
+        // Test ADD  média en role user
+        $this->login(ConstForTest::USERNAME_GUEST, ConstForTest::PASSWORD);
+        $crawler = $this->client->request('GET', '/admin/media/add');
+        $this->assertResponseIsSuccessful();
+        $form = $crawler->selectButton('Ajouter')->form();
+        $form['media[title]'] = ConstForTest::MEDIA_TITLE;
+        $uploadedFile = ConstForTest::getUploadedFile(true);
+        $form['media[file]'] = $uploadedFile;
+        $this->client->submit($form);
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $media = $this->getEntityManager()->getRepository(Media::class)->findOneBy(['title' => ConstForTest::MEDIA_TITLE]);
+        if ($media === null) {
+            throw new \Exception('Media not found');
+        }
+        self::assertEquals(ConstForTest::MEDIA_TITLE, $media->getTitle());
+        // Test DELETE média
+        $this->client->request('GET', '/admin/media/delete/' . $media->getId());
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $media = $this->getEntityManager()->getRepository(Media::class)->find($media->getId());
+        self::assertNull($media);
     }
 
     public function testAdminMediaAddNoFileBadFile()

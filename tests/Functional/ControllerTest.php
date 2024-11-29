@@ -29,11 +29,13 @@ class ControllerTest extends FunctionalTestCase
     public function testPortfolio()
     {
         //test portfolio général
-        $id = $this->getEntityManager()->getRepository(User::class)->findAll()[0]->getId();
-        $this->client->request('GET', '/portfolio/' . $id , []);
-        $this->assertResponseIsSuccessful();
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertSelectorTextContains('h3', 'Portfolio');
+        foreach ($this->getEntityManager()->getRepository(User::class)->findAll() as $user) {
+            $id = $user->getId();
+            $this->client->request('GET', '/portfolio/' . $id , []);
+            $this->assertResponseIsSuccessful();
+            $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+            $this->assertSelectorTextContains('h3', 'Portfolio');
+        }
     }
 
     public function testGuests()

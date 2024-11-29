@@ -26,4 +26,17 @@ class loginTest extends FunctionalTestCase
         self::assertFalse($authorizationChecker->isGranted('IS_AUTHENTICATED'));
     }
 
+    public function testLoginThatFail()
+    {
+        $crawler = $this->client->request('GET', '/login');
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSelectorTextContains('h1', 'Connexion');
+
+        $this->login('toto', 'toto');
+        self::assertEquals(302, $this->client->getResponse()->getStatusCode());
+        
+        $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
+        self::assertFalse($authorizationChecker->isGranted('IS_AUTHENTICATED'));
+    }
+
 }

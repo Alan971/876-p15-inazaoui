@@ -27,13 +27,15 @@ class MediaRepository extends ServiceEntityRepository
     /**
      * Récupère tous les médias d'un utilisateur qu n'est pas bloqué
      *
-     * @param UserInterface $user
+     * @param ?UserInterface $user
      * @return array    Returns an array of Media objects
      */ 
-    public function findByUserNotLocked(UserInterface $user): array
+    public function findByUserNotLocked(?UserInterface $user): array
     {
-        if ($user->getAccess() === true) {
-            return self::findByUser($user);
+        if ($user instanceof UserInterface) {
+            if ($user->getAccess() === true) {
+                return self::findByUser($user);
+            }
         }
         return [];
     }
