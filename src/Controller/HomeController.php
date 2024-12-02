@@ -50,9 +50,7 @@ class HomeController extends AbstractController
     {
         $albums = $em->getRepository(Album::class)->findAll();
         $album = $id ? $em->getRepository(Album::class)->find($id) : null;
-        //remplacement de la définition de l'utilisateur par l'utilisateur connecté
-        // $user = $em->getRepository(User::class)->findOneByAdmin(true);
-        $user = $this->getUser();
+        $user = $em->getRepository(User::class)->findOneByAdmin(true);
         $usersNotLocked = $em->getRepository(User::class)->findByAccess(true);
 
         $medias = $album
