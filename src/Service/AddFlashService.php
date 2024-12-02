@@ -4,6 +4,7 @@ namespace App\Service;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Request;
 
 class AddFlashService
 {
@@ -13,9 +14,12 @@ class AddFlashService
 
     public function addFlash(string $type, string $message): void
     {
-        $session = $this->requestStack->getCurrentRequest()->getSession();
-        if ($session instanceof Session) {
-            $session->getFlashBag()->add($type, $message);
+        $requestStack = $this->requestStack->getCurrentRequest();
+        if ($requestStack instanceof Request) {
+            $session = $requestStack->getSession();
+            if ($session instanceof Session) {
+                $session->getFlashBag()->add($type, $message);
+            }
         }
     }
 }

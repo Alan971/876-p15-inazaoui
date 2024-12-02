@@ -13,13 +13,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpFoundation\Response;
 
 #[IsGranted('ROLE_ADMIN')]
 class AlbumController extends AbstractController
 {
-
     #[Route("/admin/album", name:"admin_album_index")]
-    public function index(EntityManagerInterface $em)
+    public function index(EntityManagerInterface $em) : Response
     {
         $albums = $em->getRepository(Album::class)->findAll();
 
@@ -27,7 +27,7 @@ class AlbumController extends AbstractController
     }
 
     #[Route("/admin/album/add", name:"admin_album_add")]
-    public function add(Request $request, EntityManagerInterface $em)
+    public function add(Request $request, EntityManagerInterface $em): Response
     {
         $album = new Album();
         $form = $this->createForm(AlbumType::class, $album);
@@ -44,7 +44,7 @@ class AlbumController extends AbstractController
     }
 
     #[Route("/admin/album/update/{id}", name:"admin_album_update")]
-    public function update(Request $request, int $id, EntityManagerInterface $em)
+    public function update(Request $request, int $id, EntityManagerInterface $em): Response
     {
         $album = $em->getRepository(Album::class)->find($id);
         $form = $this->createForm(AlbumType::class, $album);
@@ -60,14 +60,15 @@ class AlbumController extends AbstractController
     }
 
     #[Route("/admin/album/delete/{id}", name:"admin_album_delete")]
-    public function delete(int $id, EntityManagerInterface $em)
+    public function delete(int $id, EntityManagerInterface $em): Response
     {
         if(!empty($em->getRepository(Media::class)->findByAlbum($id))) {
             $this->addFlash('danger', 'Cet album est lié à des médias, veuillez les supprimer avant de supprimer cet album');
         }
         else {
-            $media = $em->getRepository(Album::class)->find($id);
-            $em->remove($media);
+            /** @var Album $album */
+            $album = $em->getRepository(Album::class)->find($id);
+            $em->remove($album);
             $em->flush();
         }
 

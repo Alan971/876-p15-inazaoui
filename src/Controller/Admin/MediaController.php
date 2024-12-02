@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Media;
+use App\Entity\User;
 use App\Form\MediaType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpFoundation\Response;
 
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
 class MediaController extends AbstractController
@@ -23,7 +25,7 @@ class MediaController extends AbstractController
     }
 
     #[Route("/admin/media", name:"admin_media_index")]
-    public function index(Request $request, EntityManagerInterface $em)
+    public function index(Request $request, EntityManagerInterface $em): Response
     {
         $page = $request->query->getInt('page', 1);
         $criteria = [];
@@ -48,7 +50,7 @@ class MediaController extends AbstractController
     }
 
     #[Route("/admin/media/add", name:"admin_media_add")]
-    public function add(Request $request, EntityManagerInterface $em)
+    public function add(Request $request, EntityManagerInterface $em): Response
     {
         $media = new Media();
         $form = $this->createForm(MediaType::class, $media, ['is_admin' => $this->isGranted('ROLE_ADMIN')]);
@@ -56,9 +58,11 @@ class MediaController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$this->isGranted('ROLE_ADMIN')) {
-                $media->setUser($this->getUser());
+                if($this->getUser() instanceof User){
+                    $media->setUser($this->getUser());
+                }
             }
-
+            /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $file */
             $file = $form->get('file')->getData();
 
             if (!$file){
@@ -84,13 +88,17 @@ class MediaController extends AbstractController
             }
 
             $uploadDirectory = $this->getParameter('UPLOADS_DIRECTORY');
-            $fileName = md5(uniqid()) . '.' . $file->guessExtension();
-            $file->move($uploadDirectory, $fileName);
-
-            // Mettre à jour le chemin du fichier dans l'entité
-            $media->setPath($uploadDirectory . $fileName);
-            $em->persist($media);
-            $em->flush();
+            $extension = $file->guessExtension();
+            $fileName = md5(uniqid()) . '.' . $extension;
+            if(is_string($uploadDirectory)){
+                $file->move($uploadDirectory, $fileName);   
+                $media->setPath($uploadDirectory . $fileName);
+                $em->persist($media);
+                $em->flush();
+            }
+            else {
+                throw new \Exception('Il y a eu un problème lors du téléchargement du fichier');
+            }
 
             return $this->redirectToRoute('admin_media_index');
         }
@@ -99,8 +107,9 @@ class MediaController extends AbstractController
     }
 
     #[Route("/admin/media/delete/{id}", name:"admin_media_delete")]
-    public function delete(int $id, EntityManagerInterface $em)
+    public function delete(int $id, EntityManagerInterface $em): Response
     {
+        /** @var Media $media */
         $media = $em->getRepository(Media::class)->find($id);
         $em->remove($media);
         $em->flush();

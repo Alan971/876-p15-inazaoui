@@ -7,16 +7,17 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Album;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * @extends ServiceEntityRepository<Media>
  *
  * @method Media|null find($id, $lockMode = null, $lockVersion = null)
- * @method Media|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Media|null findOneBy(array<string, mixed> $criteria, array<string|null> $orderBy = null)
  * @method Media[]    findByUser(UserInterface $user)
  * @method Media[]    findByAlbum(int $albumId)
  * @method Media[]    findAll()
- * @method Media[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Media[]    findBy(array<string, mixed> $criteria, array<string|null> $orderBy = null, $limit = null, $offset = null)
  */
 class MediaRepository extends ServiceEntityRepository
 {
@@ -30,7 +31,7 @@ class MediaRepository extends ServiceEntityRepository
      * Récupère tous les médias d'un utilisateur qu n'est pas bloqué
      *
      * @param ?UserInterface $user
-     * @return array    Returns an array of Media objects
+     * @return array<int, Media>    Returns an array of Media objects
      */ 
     public function findByUserNotLocked(?UserInterface $user): array
     {
@@ -44,15 +45,15 @@ class MediaRepository extends ServiceEntityRepository
     }
 
     /**
-     * Récupère tous les médias d'un album dont les auteurs ne sont pas bloqués
-     *
-     * @param Album $album
-     * @param array $users
-     * @return array
-     */
+    * Récupère tous les médias d'un album dont les auteurs ne sont pas bloqués
+    *
+    * @param Album $album
+    * @param array<int, \App\Entity\User> $users
+    * @phpstan-return array<mixed, mixed>      
+    */
     public function findByAlbumUserNotLocked(Album $album,array $users): array
     {
-        return $this->createQueryBuilder('m')
+        $result = $this->createQueryBuilder('m')
             ->andWhere('m.album = :album')
             ->andWhere('m.user IN (:users)')
             ->setParameter('album', $album)
@@ -60,6 +61,7 @@ class MediaRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+        return (array) $result;
     }
 //    /**
 //     * @return Media[] Returns an array of Media objects

@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class AdminControllerTest extends FunctionalTestCase
 {
-    public function testAdminNotConnected()
+    public function testAdminNotConnected(): void
     {
         $this->client->request('GET', '/admin/album', []);
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
@@ -26,13 +26,14 @@ class AdminControllerTest extends FunctionalTestCase
         $this->assertStringContainsString('http://localhost/login', $location);
     }
 
-    public function testAdminAlbum()
+    public function testAdminAlbum(): void
     {
         //connexion admin et arrivée sur la page admin/album
         $this->login(ConstForTest::USERNAME, ConstForTest::PASSWORD);
         $this->client->request('GET', '/admin/album', []);
         $this->assertResponseIsSuccessful();
         self::assertSelectorTextNotContains('h1', 'Albums');
+        /** @var AuthorizationCheckerInterface $authorizationChecker */
         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
         self::assertTrue($authorizationChecker->isGranted('ROLE_ADMIN'));
 
@@ -62,6 +63,7 @@ class AdminControllerTest extends FunctionalTestCase
         }
         self::assertEquals('test', $album->getName());
         //suppression du media créé
+        /** @var Media $media */
         $media = $this->getEntityManager()->getRepository(Media::class)->find($media->getId());
         $this->getEntityManager()->remove($media);
         $this->getEntityManager()->flush();
@@ -73,6 +75,7 @@ class AdminControllerTest extends FunctionalTestCase
         $form['album[name]'] = ConstForTest::ALBUM_NAME . 'Modif';
         $this->client->submit($form);
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        /** @var Album $album */
         $album = $this->getEntityManager()->getRepository(Album::class)->findOneBy(['name' => ConstForTest::ALBUM_NAME . 'Modif']); 
 
         // test de DELETE réussi
@@ -82,12 +85,13 @@ class AdminControllerTest extends FunctionalTestCase
         self::assertNull($album);
     }
 
-    public function testAdminMedia()
+    public function testAdminMedia(): void
     {
         //test d'accès à index des média en admin
         $this->login(ConstForTest::USERNAME, ConstForTest::PASSWORD);
         $crawler = $this->client->request('GET', '/admin/media');
         $this->assertResponseIsSuccessful();
+        /** @var AuthorizationCheckerInterface $authorizationChecker */
         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
         self::assertTrue($authorizationChecker->isGranted('ROLE_ADMIN'));
 
@@ -95,6 +99,7 @@ class AdminControllerTest extends FunctionalTestCase
         $this->login(ConstForTest::USERNAME_GUEST, ConstForTest::PASSWORD);
         $crawler = $this->client->request('GET', '/admin/media');
         $this->assertResponseIsSuccessful();
+        /** @var AuthorizationCheckerInterface $authorizationChecker */
         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
         self::assertTrue($authorizationChecker->isGranted('ROLE_USER'));
 
@@ -102,6 +107,7 @@ class AdminControllerTest extends FunctionalTestCase
         $this->login(ConstForTest::USERNAME, ConstForTest::PASSWORD);
         $crawler = $this->client->request('GET', '/admin/media/add');
         $this->assertResponseIsSuccessful();
+
         $form = $crawler->selectButton('Ajouter')->form();
         $form['media[title]'] = ConstForTest::MEDIA_TITLE;
         $form['media[user]'] = "1";
@@ -128,6 +134,7 @@ class AdminControllerTest extends FunctionalTestCase
         $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Ajouter')->form();
         $form['media[title]'] = ConstForTest::MEDIA_TITLE;
+        
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = ConstForTest::getUploadedFile(true);
         $form['media[file]'] = $uploadedFile;
@@ -145,7 +152,7 @@ class AdminControllerTest extends FunctionalTestCase
         self::assertNull($media);
     }
 
-    public function testAdminMediaAddNoFileBadFile()
+    public function testAdminMediaAddNoFileBadFile(): void
     {
         $this->login(ConstForTest::USERNAME, ConstForTest::PASSWORD);
 
@@ -159,7 +166,7 @@ class AdminControllerTest extends FunctionalTestCase
         $this->assertEquals(500, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testAdminGuestnotConnected()
+    public function testAdminGuestnotConnected(): void
     {
         $this->client->request('GET', '/admin/guests', []);
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
@@ -170,12 +177,13 @@ class AdminControllerTest extends FunctionalTestCase
         $this->assertStringContainsString('http://localhost/login', $location);
     }
 
-    public function testAdminGuests()
+    public function testAdminGuests(): void
     {
         //connexion admin et arrivée sur la page admin/guests
         $this->login(ConstForTest::USERNAME, ConstForTest::PASSWORD);
         $this->client->request('GET', '/admin/guests', []);
         $this->assertResponseIsSuccessful();
+        /** @var  AuthorizationCheckerInterface $authorizationChecker */
         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
         self::assertTrue($authorizationChecker->isGranted('ROLE_ADMIN'));
 
@@ -201,6 +209,7 @@ class AdminControllerTest extends FunctionalTestCase
         // test du user bloqué doubler pour avoir les deux états
         $this->client->request('GET', '/admin/guests/lock/' . $guest->getId());
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        /** @var User $guest */
         $guest = $this->getEntityManager()->getRepository(User::class)->find($guest->getId());
         self::assertEquals(false, $guest->getAccess());
 
@@ -216,6 +225,7 @@ class AdminControllerTest extends FunctionalTestCase
         $this->login(ConstForTest::USERNAME, ConstForTest::PASSWORD);
         $this->client->request('GET', '/admin/guests/lock/' . $guest->getId());
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        /** @var User $guest */
         $guest = $this->getEntityManager()->getRepository(User::class)->find($guest->getId());
         self::assertEquals(true, $guest->getAccess());
 

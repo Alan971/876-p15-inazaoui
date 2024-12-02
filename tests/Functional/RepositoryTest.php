@@ -12,25 +12,30 @@ use App\Tests\ConstForTest;
 
 class RepositoyTest extends FunctionalTestCase
 {
-    public function testUserRepo()
+    public function testUserRepo(): void
     {
         //test UpgradePassword that work
+        /** @var User $user */
         $user = $this->getEntityManager()->getRepository(User::class)->findOneById(1);
-        $HashedPassword = $this->service(UserPasswordHasherInterface::class)->hashPassword($user, ConstForTest::NEW_PASSWORD);
-        $this->getEntityManager()->getRepository(User::class)->UpgradePassword($user, $HashedPassword);
-        self::assertEquals($HashedPassword, $user->getPassword());
+        /** @var UserPasswordHasherInterface $hasher */
+        $hasher = $this->service(UserPasswordHasherInterface::class);
+        $hashedPassword = $hasher->hashPassword($user, ConstForTest::NEW_PASSWORD);
+        $this->getEntityManager()->getRepository(User::class)->UpgradePassword($user, $hashedPassword);
+        self::assertEquals($hashedPassword, $user->getPassword());
         // manip inverse
-        $HashedPassword = $this->service(UserPasswordHasherInterface::class)->hashPassword($user, ConstForTest::PASSWORD);
-        $this->getEntityManager()->getRepository(User::class)->UpgradePassword($user, $HashedPassword);
-        self::assertEquals($HashedPassword, $user->getPassword());
+        $hashedPassword = $hasher->hashPassword($user, ConstForTest::PASSWORD);
+        $this->getEntityManager()->getRepository(User::class)->UpgradePassword($user, $hashedPassword);
+        self::assertEquals($hashedPassword, $user->getPassword());
     }
-    public function testMediaRepo()
+    public function testMediaRepo(): void
     {
         //test fingbyusernotlocked on prends Ina dans ce cas car elle n'est pas bloquée
+        /** @var User $user */
         $user = $this->getEntityManager()->getRepository(User::class)->findOneByName(ConstForTest::USERNAME);
         $user->setAccess(false);
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+        /** @var array<int, Media> $medias */
         $medias = $this->getEntityManager()->getRepository(Media::class)->findByUserNotLocked($user);
         self::assertEquals(0, count($medias));
         // manip inverse

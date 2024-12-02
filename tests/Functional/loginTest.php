@@ -11,7 +11,7 @@ use App\Tests\ConstForTest;
 class loginTest extends FunctionalTestCase
 {
 
-    public function testLoginThatSucceed()
+    public function testLoginThatSucceed(): void
     {
         $crawler = $this->client->request('GET', '/login');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
@@ -19,6 +19,7 @@ class loginTest extends FunctionalTestCase
 
         $this->login(ConstForTest::USERNAME, ConstForTest::PASSWORD);
 
+        /** @var  AuthorizationCheckerInterface $authorizationChecker */
         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
         self::assertTrue($authorizationChecker->isGranted('IS_AUTHENTICATED'));
 
@@ -26,7 +27,7 @@ class loginTest extends FunctionalTestCase
         self::assertFalse($authorizationChecker->isGranted('IS_AUTHENTICATED'));
     }
 
-    public function testLoginThatFail()
+    public function testLoginThatFail(): void
     {
         $crawler = $this->client->request('GET', '/login');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
@@ -35,6 +36,7 @@ class loginTest extends FunctionalTestCase
         $this->login('toto', 'toto');
         self::assertEquals(302, $this->client->getResponse()->getStatusCode());
         
+        /** @var  AuthorizationCheckerInterface $authorizationChecker */
         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
         self::assertFalse($authorizationChecker->isGranted('IS_AUTHENTICATED'));
     }

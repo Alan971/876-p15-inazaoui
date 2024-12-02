@@ -10,7 +10,7 @@ use App\Entity\User;
 
 class ControllerTest extends FunctionalTestCase
 {
-    public function testHome()
+    public function testHome(): void
     {
         $this->client->request('GET', '/', []);
         $this->assertResponseIsSuccessful();
@@ -18,7 +18,7 @@ class ControllerTest extends FunctionalTestCase
         $this->assertSelectorTextContains('h2', 'Photographe');
     }
 
-    public function testAbout()
+    public function testAbout() : void
     {
         $this->client->request('GET', '/about', []);
         $this->assertResponseIsSuccessful();
@@ -26,7 +26,7 @@ class ControllerTest extends FunctionalTestCase
         $this->assertSelectorTextContains('h2', 'Qui suis-je ?');
     }
 
-    public function testPortfolio()
+    public function testPortfolio(): void
     {
         //test portfolio général
         foreach ($this->getEntityManager()->getRepository(User::class)->findAll() as $user) {
@@ -38,7 +38,7 @@ class ControllerTest extends FunctionalTestCase
         }
     }
 
-    public function testGuests()
+    public function testGuests(): void
     {
         //test guests général
         $this->client->request('GET', '/guests', []);
@@ -46,7 +46,8 @@ class ControllerTest extends FunctionalTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertSelectorTextContains('h3', 'Invités');
     }
-    public function testGuest()
+
+    public function testGuest(): void
     {
         //test guest général
         $guest = $this->getEntityManager()->getRepository(User::class)->findAll()[0];
@@ -56,7 +57,8 @@ class ControllerTest extends FunctionalTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertSelectorTextContains('h3', $guest->getName());
     }
-    public function testGuestNotFound()
+
+    public function testGuestNotFound(): void
     {
         //test guest non trouvé
         $guest = $this->getEntityManager()->getRepository(User::class)->findAll()[0];
@@ -68,7 +70,7 @@ class ControllerTest extends FunctionalTestCase
     /**
      * @depends testGuestNotFound
      */
-    public function testGuestLocked()
+    public function testGuestLocked(): void
     {
         // choix d'un invité au hasard, controle de son état d'accès et changement de l'état si nécessaire
         $guests = $this->getEntityManager()->getRepository(User::class)->findAll();

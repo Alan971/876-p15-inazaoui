@@ -16,14 +16,16 @@ use App\Tests\ConstForTest;
 class EntityTest extends FunctionalTestCase
 {
 
-    public function testUser()
+    public function testUser(): void
     {
 
         $user = new User();
 
         $user->setName(ConstForTest::NEW_USERNAME);
         $user->setEmail(ConstForTest::USER_MAIL_ADRESS);
-        $hashedPassword = $this->service(UserPasswordHasherInterface::class)->hashPassword($user, ConstForTest::PASSWORD);
+        /** @var UserPasswordHasherInterface $passwordHasher */
+        $passwordHasher = $this->service(UserPasswordHasherInterface::class);
+        $hashedPassword = $passwordHasher->hashPassword($user, ConstForTest::PASSWORD);
         $user->setPassword($hashedPassword);
         $user->setRoles(['ROLE_USER']);
         $user->setAdmin(false);
@@ -38,14 +40,14 @@ class EntityTest extends FunctionalTestCase
         self::assertEquals(true, $user->getAccess());
         self::assertEquals(ConstForTest::DESCRIPTION, $user->getDescription());
 
-
+        /** @var User $user */
         $user = $this->getEntityManager()->getRepository(User::class)->findOneById(1);
         self::assertEquals(1, $user->getId());
         self::assertNotNull($user->getMedias());
 
     }
 
-    public function testMedia()
+    public function testMedia(): void
     {
         $media = new Media();
         $album = new Album();
@@ -69,7 +71,7 @@ class EntityTest extends FunctionalTestCase
         self::assertNotEmpty($media->getFile());
     }
     
-    public function testAlbum()
+    public function testAlbum(): void
     {
         $album = new Album();
         $user = new User();

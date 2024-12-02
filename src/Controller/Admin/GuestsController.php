@@ -27,6 +27,7 @@ class GuestsController extends AbstractController
     #[Route('/admin/guests/lock/{id}', name: 'admin_guest_lock')]
     public function lock(EntityManagerInterface $em, int $id): Response
     {
+        /** @var User $guest */
         $guest = $em->getRepository(User::class)->find($id);
         if ($guest->getAccess()) {
             $guest->setAccess(false);
@@ -42,6 +43,7 @@ class GuestsController extends AbstractController
     #[Route('/admin/guests/delete/{id}', name: 'admin_guest_delete')]
     public function delete(EntityManagerInterface $em, int $id): Response
     {
+        /** @var User $guest */
         $guest = $em->getRepository(User::class)->find($id);
         $em->remove($guest);
         $em->flush();
@@ -57,8 +59,9 @@ class GuestsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
-            $guest->setPassword($passwordHasher->hashPassword($guest, $guest->getPassword()));
+            if($guest->getPassword() !== null){
+                $guest->setPassword($passwordHasher->hashPassword($guest, $guest->getPassword()));
+            }
             $em->persist($guest);
             $em->flush();
             return $this->redirectToRoute('admin_guests_index');

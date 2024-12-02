@@ -42,7 +42,7 @@ abstract class FunctionalTestCase extends WebTestCase
         return $this->service(EntityManagerInterface::class);
     }
 
-    protected function login(string $username, string $password)
+    protected function login(string $username, string $password): void
     {
         $crawler = $this->client->request('GET', '/login');
         $form = $crawler->selectButton('Connexion')->form();

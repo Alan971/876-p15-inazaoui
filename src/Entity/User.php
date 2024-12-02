@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @method string getName()
  * @method string getEmail()
  * @method string getDescription()
- * @method array getRoles()
+ * @method array<string> getRoles()
  */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -39,6 +39,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
+    /**
+     * @var array<string>
+     */
     #[ORM\Column()]
     private array $roles = [];
 
@@ -53,6 +56,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotCompromisedPassword()]
     private ?string $password = null;
 
+    /**
+     * @var Collection<int, Media>
+     */
     #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user', cascade: [ 'remove'])]
     private Collection $medias;
 
@@ -99,11 +105,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->description = $description;
     }
 
+    /**
+     * @return Collection<int, Media>
+     */
     public function getMedias(): Collection
     {
         return $this->medias;
     }
 
+    /**
+     * @param Collection<int, Media> $medias
+     */
     public function setMedias(Collection $medias): void
     {
         $this->medias = $medias;
@@ -131,6 +143,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
+    /**
+     * @param array<string> $roles
+     */
     public function setRoles(array $roles): void
     {
         $this->roles = $roles;
@@ -155,7 +170,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
     public function getUserIdentifier(): string
     {
-        return $this->name;
+        if (is_string($this->name)) {
+            return $this->name;
+        }
+        return '';
     }
     public function getAccess(): ?bool
     {

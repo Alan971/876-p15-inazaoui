@@ -1,11 +1,14 @@
 parameters:
-    level: 3
+    level: 9
     paths:
         - bin/
         - config/
         - public/
         - src/
         - tests/
+    treatPhpDocTypesAsCertain: false 
 includes:
     - vendor/phpstan/phpstan-doctrine/extension.neon
+
+
 

@@ -12,7 +12,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class AppFixturesTest extends FunctionalTestCase
 {
-    public function testFixtures()
+    public function testFixtures(): void
     {
         $objectManager = $this->createMock(ObjectManager::class);
         $objectManager->expects($this->exactly(3))
