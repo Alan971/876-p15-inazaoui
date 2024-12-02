@@ -113,7 +113,7 @@ class AdminControllerTest extends FunctionalTestCase
         $form['media[user]'] = "1";
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = ConstForTest::getUploadedFile(true);
-        $form['media[file]'] = $uploadedFile;
+        $form['media[file]'] = $uploadedFile->getPathname();
         $this->client->submit($form);
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
         $media = $this->getEntityManager()->getRepository(Media::class)->findOneBy(['title' => ConstForTest::MEDIA_TITLE]);
@@ -137,7 +137,7 @@ class AdminControllerTest extends FunctionalTestCase
         
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = ConstForTest::getUploadedFile(true);
-        $form['media[file]'] = $uploadedFile;
+        $form['media[file]'] = $uploadedFile->getPathname();
         $this->client->submit($form);
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
         $media = $this->getEntityManager()->getRepository(Media::class)->findOneBy(['title' => ConstForTest::MEDIA_TITLE]);
