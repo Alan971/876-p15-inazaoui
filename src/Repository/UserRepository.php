@@ -40,12 +40,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * @param array      $criteria
-     * @param array|null $orderBy
+     * @param array<mixed>      $criteria
+     * @param array<mixed>|null $orderBy
      * @param int|null   $limit
      * @param int|null   $offset
      *
-     * @return mixed[] An array of entities
+     * @return array<mixed> An array of entities
      */
     public function liteFindBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
@@ -66,6 +66,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         // Apply orderBy
         if ($orderBy !== null) {
             foreach ($orderBy as $field => $direction) {
+                //check needed by phpstan
+                if (!in_array($direction, ['ASC', 'DESC'], true)) {
+                    throw new \InvalidArgumentException('Invalid order direction. Use "ASC" or "DESC".');
+                }
                 $queryBuilder->addOrderBy('u.' . $field, $direction);
             }
         }
@@ -76,10 +80,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $queryBuilder->setFirstResult($offset);
         }
 
-        return $queryBuilder->getQuery()->getResult();
+        return $queryBuilder->getQuery()->getArrayResult();
     }
 
-    
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

@@ -5,13 +5,17 @@ namespace App\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\User;
+use App\Entity\Media;
+use App\Entity\Album;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class AppFixtures extends Fixture
 {
-    public function __construct(private UserPasswordHasherInterface $passwordHasher)
+    public function __construct(private UserPasswordHasherInterface $passwordHasher, private EntityManagerInterface $em)
     {
         $this->passwordHasher = $passwordHasher;
+        $this->em = $em;
     }
     public function load(ObjectManager $manager): void
     {
@@ -26,30 +30,67 @@ class AppFixtures extends Fixture
         $userIna->setRoles(['ROLE_ADMIN']);
         $userIna->setAccess(true);
         $manager->persist($userIna);
+        $manager->flush();
 
-        // Création de 2 guests
-        $userGuest1 = new User();
-        $userGuest1->setName('Guest1');
-        $userGuest1->setEmail('guest1@gmail.com');
-        $hashedPassword = $this->passwordHasher->hashPassword($userGuest1, 'test');
-        $userGuest1->setPassword($hashedPassword);
-        $userGuest1->setAdmin(false);
-        $userGuest1->setDescription('Guest1');
-        $userGuest1->setRoles(['ROLE_USER']);
-        $userGuest1->setAccess(true);
-        $manager->persist($userGuest1);
+        $ina = $this->em->getRepository(User::class)->findOneBy(['name' => 'Ina']);
+        $startNumberOfGuests = $ina? $ina->getId()+1 : 1;
+        $numberOfGuests = 100;
+        // Création de 100 guests
+        $j=0;
+        for ($i = $startNumberOfGuests; $i <= $startNumberOfGuests + $numberOfGuests; $i++) {
+            $j += 1;
+            $userGuest = new User();
+            $userGuest->setName('Guest' . $j);
+            $userGuest->setEmail('guest' . $j . '@gmail.com');
+            $hashedPassword = $this->passwordHasher->hashPassword($userGuest, 'test');
+            $userGuest->setPassword($hashedPassword);
+            $userGuest->setAdmin(false);
+            $userGuest->setDescription('Guest' . $j);
+            $userGuest->setRoles(['ROLE_USER']);
+            $userGuest->setAccess(true);
+            $manager->persist($userGuest);
+        }
+        $manager->flush();
+        //Création de 5 albums
+        for ($i = 1; $i <= 5; $i++) {
+            $album = new Album();
+            $album->setName('Album' . $i);
+            $manager->persist($album);
+        }
+        $manager->flush();
 
-        $userGuest2 = new User();
-        $userGuest2->setName('Guest2');
-        $userGuest2->setEmail('guest2@gmail.com');
-        $hashedPassword = $this->passwordHasher->hashPassword($userGuest2, 'test');
-        $userGuest2->setPassword($hashedPassword);
-        $userGuest2->setAdmin(false);
-        $userGuest2->setDescription('Guest2');
-        $userGuest2->setRoles(['ROLE_USER']);
-        $userGuest2->setAccess(false);   
-        $manager->persist($userGuest2);
-
+        
+        $albums = $this->em->getRepository(Album::class)->findOneBy(['name' => 'Album1']);
+        $idAlbumStart = $albums? $albums->getId()+1 : 1;
+        //Création de 5051 medias
+        $guests = $this->em->getRepository(User::class)->findAll();
+        $albums = $this->em->getRepository(Album::class)->findAll();
+        for ($i = 1; $i <= 5000; $i++) {
+            $media = new Media();
+            $media->setTitle('Titre ' . $i);
+            $countNumberOfI = strlen((string)$i);
+            $zeroString = '';
+            for ($j = $countNumberOfI; $j < 4; $j++) {
+                $zeroString .= '0';
+            } 
+            $media->setPath('uploads/' . $zeroString . $i . '.jpg');
+            $media->setUser($guests[random_int(0, $numberOfGuests-1)]);
+            $manager->persist($media);
+        }
+        for ($i = 5001; $i <= 5050; $i++) {
+            $media = new Media();
+            $media->setTitle('Titre ' . $i);
+            $countNumberOfI = strlen((string)$i);
+            $zeroString = '';
+            for ($j = $countNumberOfI; $j < 4; $j++) {
+                $zeroString .= '0';
+            } 
+            $media->setPath('uploads/' . $zeroString . $i . '.jpg');
+            $media->setUser($guests[random_int(0, $numberOfGuests-1)]);
+            $countAlbums = count($albums) >1? count($albums) : 1;
+            $media->setAlbum($albums[random_int(0, $countAlbums-1)]);
+            $manager->persist($media);
+        }
         $manager->flush();
     }
 }
