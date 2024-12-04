@@ -39,6 +39,47 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * @param array      $criteria
+     * @param array|null $orderBy
+     * @param int|null   $limit
+     * @param int|null   $offset
+     *
+     * @return mixed[] An array of entities
+     */
+    public function liteFindBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('u')
+            ->select('u.name', 'u.id', 'COUNT(m.id) AS media_count')
+            ->leftJoin('u.medias', 'm')
+            ->groupBy('u.id');
+
+        foreach ($criteria as $field => $value) {
+            if (is_array($value)) {
+                $queryBuilder->andWhere(sprintf('%s IN (:%s)',  'u.' . $field, $field))
+                    ->setParameter($field, $value);
+            } else {
+                $queryBuilder->andWhere(sprintf('%s = :%s', 'u.' . $field, $field))
+                    ->setParameter($field, $value);
+            }
+        }
+        // Apply orderBy
+        if ($orderBy !== null) {
+            foreach ($orderBy as $field => $direction) {
+                $queryBuilder->addOrderBy('u.' . $field, $direction);
+            }
+        }
+        if ($limit !== null) {
+            $queryBuilder->setMaxResults($limit);
+        }
+        if ($offset !== null) {
+            $queryBuilder->setFirstResult($offset);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

@@ -163,7 +163,7 @@ class AdminControllerTest extends FunctionalTestCase
         $form['media[title]'] = ConstForTest::MEDIA_TITLE;
         $form['media[user]'] = '1';
         $this->client->submit($form);
-        $this->assertEquals(500, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminGuestnotConnected(): void

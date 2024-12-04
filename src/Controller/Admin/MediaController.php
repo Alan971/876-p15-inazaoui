@@ -9,26 +9,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
 
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
 class MediaController extends AbstractController
 {
-    private ValidatorInterface $validator;
-
-    public function __construct(ValidatorInterface $validator)
-    {
-        $this->validator = $validator;
-    }
-
     #[Route("/admin/media", name:"admin_media_index")]
     public function index(Request $request, EntityManagerInterface $em): Response
     {
         $page = $request->query->getInt('page', 1);
         $criteria = [];
+        $maxMediaPerPage = 25;
 
         if (!$this->isGranted('ROLE_ADMIN')) {
             $criteria['user'] = $this->getUser();
@@ -37,15 +29,16 @@ class MediaController extends AbstractController
         $medias = $em->getRepository(Media::class)->findBy(
             $criteria,
             ['id' => 'ASC'],
-            25,
-            25 * ($page - 1)
+            $maxMediaPerPage,
+            $maxMediaPerPage * ($page - 1)
         );
         $total = $em->getRepository(Media::class)->count([]);
 
         return $this->render('admin/media/index.html.twig', [
             'medias' => $medias,
             'total' => $total,
-            'page' => $page
+            'page' => $page,
+            'maxMediaPerPage' => $maxMediaPerPage
         ]);
     }
 
@@ -64,42 +57,32 @@ class MediaController extends AbstractController
             }
             /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $file */
             $file = $form->get('file')->getData();
+            try {
+                if ($file){
+                    $uploadDirectory = $this->getParameter('UPLOADS_DIRECTORY');
+                    $extension = $file->guessExtension();
+                    $fileName = uniqid() . '.' . $extension;
 
-            if (!$file){
-                throw new \Exception('Aucun fichier sélectionné');
-            }
+                        if(is_string($uploadDirectory)){
+                            $file->move($uploadDirectory, $fileName);   
+                            $media->setPath($uploadDirectory . $fileName);
+                            $em->persist($media);
+                            $em->flush();
+                        }
+                        else {
+                            throw new \Exception('Le fichier n\'a pas été téléchargé');
+                        }
 
-            $violations = $this->validator->validate($file, [
-                new Assert\File([
-                    'mimeTypes' => ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'],
-                    'maxSize' => '2M',
-                ]),
-                new Assert\Image([
-                    'maxWidth' => 3840, 
-                    'maxHeight' => 2160,
-                ]),
-            ]);
-            if (count($violations) > 0) {
-                // Si le fichier ne respecte pas les règles de validation, lever une exception
-                $errorMessages  = array_map(function($violation){
-                    return $violation->getMessage();
-                }, iterator_to_array($violations));
-                throw new \Exception('Fichier invalide : ' . implode(', ', $errorMessages));
-            }
-
-            $uploadDirectory = $this->getParameter('UPLOADS_DIRECTORY');
-            $extension = $file->guessExtension();
-            $fileName = md5(uniqid()) . '.' . $extension;
-            if(is_string($uploadDirectory)){
-                $file->move($uploadDirectory, $fileName);   
-                $media->setPath($uploadDirectory . $fileName);
-                $em->persist($media);
-                $em->flush();
-            }
-            else {
-                throw new \Exception('Il y a eu un problème lors du téléchargement du fichier');
-            }
-
+                }
+                else {
+                    throw new \Exception('Fichier non trouvé');
+                    }
+            } catch (\Exception $e) {
+                $this->addFlash(
+                    'error',
+                    $e->getMessage()
+                );
+        }
             return $this->redirectToRoute('admin_media_index');
         }
 
