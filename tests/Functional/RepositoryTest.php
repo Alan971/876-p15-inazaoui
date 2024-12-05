@@ -16,7 +16,7 @@ class RepositoyTest extends FunctionalTestCase
     {
         //test UpgradePassword that work
         /** @var User $user */
-        $user = $this->getEntityManager()->getRepository(User::class)->findOneById(1);
+        $user = $this->getEntityManager()->getRepository(User::class)->findOneById(ConstForTest::USERNAME_ID);
         /** @var UserPasswordHasherInterface $hasher */
         $hasher = $this->service(UserPasswordHasherInterface::class);
         $hashedPassword = $hasher->hashPassword($user, ConstForTest::NEW_PASSWORD);

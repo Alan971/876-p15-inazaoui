@@ -110,7 +110,7 @@ class AdminControllerTest extends FunctionalTestCase
 
         $form = $crawler->selectButton('Ajouter')->form();
         $form['media[title]'] = ConstForTest::MEDIA_TITLE;
-        $form['media[user]'] = "1";
+        $form['media[user]'] = (string) ConstForTest::USERNAME_ID;
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = ConstForTest::getUploadedFile(true);
         $form['media[file]'] = $uploadedFile->getPathname();
@@ -161,7 +161,7 @@ class AdminControllerTest extends FunctionalTestCase
         $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Ajouter')->form();
         $form['media[title]'] = ConstForTest::MEDIA_TITLE;
-        $form['media[user]'] = '1';
+        $form['media[user]'] = (string)ConstForTest::USERNAME_ID;
         $this->client->submit($form);
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }

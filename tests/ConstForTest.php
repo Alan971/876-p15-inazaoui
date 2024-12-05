@@ -19,6 +19,7 @@ class ConstForTest
     const NEW_PASSWORD = 'testNew';
     const NEW_USERNAME = 'NewName';
     const USER_MAIL_ADRESS = 'abc@gmail.com';
+    const USERNAME_ID = 685;
 
     public static function getUploadedFile(Bool $isFileExist ): UploadedFile
     {

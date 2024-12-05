@@ -31,7 +31,6 @@ class AppFixtures extends Fixture
         $userIna->setAccess(true);
         $manager->persist($userIna);
         $manager->flush();
-
         $ina = $this->em->getRepository(User::class)->findOneBy(['name' => 'Ina']);
         $startNumberOfGuests = $ina? $ina->getId()+1 : 1;
         $numberOfGuests = 100;
@@ -58,10 +57,8 @@ class AppFixtures extends Fixture
             $manager->persist($album);
         }
         $manager->flush();
-
         
         $albums = $this->em->getRepository(Album::class)->findOneBy(['name' => 'Album1']);
-        $idAlbumStart = $albums? $albums->getId()+1 : 1;
         //Création de 5051 medias
         $guests = $this->em->getRepository(User::class)->findAll();
         $albums = $this->em->getRepository(Album::class)->findAll();
@@ -74,7 +71,10 @@ class AppFixtures extends Fixture
                 $zeroString .= '0';
             } 
             $media->setPath('uploads/' . $zeroString . $i . '.jpg');
-            $media->setUser($guests[random_int(0, $numberOfGuests-1)]);
+            $maxGuests = count($guests);
+            if ($maxGuests > 0) {
+                $media->setUser($guests[random_int(0, $maxGuests-1)]);
+            }
             $manager->persist($media);
         }
         for ($i = 5001; $i <= 5050; $i++) {
@@ -86,9 +86,13 @@ class AppFixtures extends Fixture
                 $zeroString .= '0';
             } 
             $media->setPath('uploads/' . $zeroString . $i . '.jpg');
-            $media->setUser($guests[random_int(0, $numberOfGuests-1)]);
-            $countAlbums = count($albums) >1? count($albums) : 1;
-            $media->setAlbum($albums[random_int(0, $countAlbums-1)]);
+            if(count($guests) > 0) {
+                $media->setUser($guests[random_int(0, $numberOfGuests-1)]);
+            }
+            $countAlbums = count($albums);
+            if ($countAlbums > 0) {
+                $media->setAlbum($albums[random_int(0, $countAlbums-1)]);
+            }
             $manager->persist($media);
         }
         $manager->flush();

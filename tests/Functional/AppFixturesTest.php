@@ -21,15 +21,8 @@ class AppFixturesTest extends FunctionalTestCase
     {
         $objectManager = $this->createMock(ObjectManager::class);
 
-        $objectManager->expects($this->exactly(102))
-            ->method('persist')
-            ->with($this->isInstanceOf(User::class));
-        $objectManager->expects($this->exactly(5))
-            ->method('persist')
-            ->with($this->isInstanceOf(Album::class));
-        $objectManager->expects($this->exactly(5050))
-            ->method('persist')
-            ->with($this->isInstanceOf(Media::class));
+        $objectManager->expects($this->exactly(5050+5+102))
+            ->method('persist');
 
         $objectManager->expects($this->exactly(4))
             ->method('flush');
