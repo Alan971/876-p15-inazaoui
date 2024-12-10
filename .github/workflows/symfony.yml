@@ -63,7 +63,11 @@ jobs:
             
             echo "DATABASE_URL=\"mysqlsql://root:${DB_PWD}@localhost:3306/ina_zoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4\"" >> .env.test.local
             cat .env.test.local
-
+          
+      - name: Check if MariaDB container is already running
+        run: |
+          docker ps -q --filter "name=mariadb" || echo "No MariaDB container running"
+          
       - name: Start MariaDB container
         run: |
           docker run -d --name mariadb -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 mariadb:10.3
