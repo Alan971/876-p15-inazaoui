@@ -64,9 +64,9 @@ jobs:
             echo "DATABASE_URL=\"mysqlsql://root:pwd@localhost:3306/ina_zoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4\"" >> .env.test.local
             cat .env.test.local
 
-      - name: Test database connection
-        run: |
-          mysql -h localhost -P 3306 -u root -p pwd -e "SHOW DATABASES;"
+      # - name: Test database connection
+      #   run: |
+      #     mysql -h localhost -P 3306 -u root -p pwd -e "SHOW DATABASES;"
           
             
       - name: Show MariaDB logs
