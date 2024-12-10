@@ -20,7 +20,7 @@ jobs:
     
     env:
       DB_PWD: ${{ secrets.BDDMOTDEPASSE }}
-      DATABASE_URL: "mysql://root:pwd@mysql:3306/ina_zaoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4"
+      DATABASE_URL: "mysql://root:pwd@mariabd:3306/ina_zaoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4"
       # DB_PWD: password
       # DATABASE_URL: "mysql://root:${{env.DB_PWD}}@mysql:3306/ina_zaoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4"
     services:
@@ -61,17 +61,14 @@ jobs:
             \$content .= \"PANTHER_ERROR_SCREENSHOT_DIR=./var/error-screenshots\n\";
             file_put_contents('.env.test.local', \$content); }"
             
-            echo "DATABASE_URL=\"mysqlsql://root:${DB_PWD}@localhost:3306/ina_zoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4\"" >> .env.test.local
+            echo "DATABASE_URL=\"mysqlsql://root:pwd@localhost:3306/ina_zoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4\"" >> .env.test.local
             cat .env.test.local
-          
-      - name: Check if MariaDB container is already running
+            
+      - name: Test database connection
         run: |
-          docker ps -q --filter "name=mariadb" || echo "No MariaDB container running"
+          mysql -h mariadb -u root -ppwd -e "SHOW DATABASES;"
           
-      - name: Start MariaDB container
-        run: |
-          docker run -d --name mariadb -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 mariadb:10.3
-          docker ps -a
+            
       - name: Show MariaDB logs
         run: |
           ps aux | grep -i mariadb
