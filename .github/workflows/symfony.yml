@@ -62,20 +62,20 @@ jobs:
             \$content .= \"PANTHER_ERROR_SCREENSHOT_DIR=./var/error-screenshots\n\";
             file_put_contents('.env.test.local', \$content); }"
             
-            echo "DATABASE_URL=\"postgresql://postgres:${DB_PWD}@localhost:5432/critipixel?serverVersion=16&charset=utf8\"" >> .env.test.local
+            echo "DATABASE_URL=\"mysqlsql://mysql:${DB_PWD}@localhost:5432/inazoui?serverVersion=16&charset=utf8\"" >> .env.test.local
             cat .env.test.local
 
-      - name: Wait for PostgreSQL to be ready
+      - name: Wait for Maria to be ready
         run: |
           max_retries=20
           retries=0
-          until pg_isready -h localhost -p 5432 -U postgres; do
+          until mysqladmin ping -h localhost --silent; do
             retries=$((retries+1))
             if [ $retries -ge $max_retries ]; then
-              echo "PostgreSQL is not ready after $max_retries attempts."
+              echo "MariaDB  is not ready after $max_retries attempts."
               exit 1
             fi
-            echo "Waiting for PostgreSQL... (Attempt $retries of $max_retries)"
+            echo "Waiting for Maria... (Attempt $retries of $max_retries)"
             sleep 2
           done
       
