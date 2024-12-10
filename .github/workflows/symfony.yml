@@ -21,7 +21,7 @@ jobs:
     env:
        DB_PWD: ${{ secrets.BDDMOTDEPASSE }}
       # DATABASE_URL: "mysql://root:${{secrets.BDDMOTDEPASSE}}@mysql:3306/ina_zaoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4"
-    #   DB_PWD: password
+    # DB_PWD: password
       DATABASE_URL: "mysql://root:${{env.DB_PWD}}@mysql:3306/ina_zaoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4"
     services:
       mariadb:
@@ -48,12 +48,9 @@ jobs:
         with:
           php-version: '8.3'
           extensions: mbstring, intl, pdo_pgsql, pdo, pgsql, zip, gd, dom, fileinfo, curl, iconv, imagick, bcmath, soap, opcache
-        env: 
-          update: true
 
       - name: Set up MariaDB
         run: |
-              sudo systemctl start mariadb
 
       - name: Copy .env.test.local
         run: |
