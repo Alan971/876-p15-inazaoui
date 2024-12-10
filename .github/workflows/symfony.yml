@@ -20,7 +20,7 @@ jobs:
     
     env:
       DB_PWD: ${{ secrets.BDDMOTDEPASSE }}
-      DATABASE_URL: "mysql://root:${{secrets.BDDMOTDEPASSE}}@mysql:3306/ina_zaoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4"
+      DATABASE_URL: "mysql://root:pwd@mysql:3306/ina_zaoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4"
       # DB_PWD: password
       # DATABASE_URL: "mysql://root:${{env.DB_PWD}}@mysql:3306/ina_zaoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4"
     services:
