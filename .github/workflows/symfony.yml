@@ -66,7 +66,7 @@ jobs:
 
       - name: Test database connection
         run: |
-          mysql -h mariadb -u root -ppwd -e "SHOW DATABASES;"
+          mysql -h localhost -u root -p pwd -e "SHOW DATABASES;"
           
             
       - name: Show MariaDB logs
