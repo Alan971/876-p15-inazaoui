@@ -39,77 +39,77 @@ jobs:
             --health-retries=3
 
     steps:
-    - name: setup github Action
-      uses: actions/checkout@v4
+      - name: setup github Action
+        uses: actions/checkout@v4
 
     # uses: shivammathur/setup-php@v2
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.3'
-        extensions: mbstring, intl, pdo_pgsql, pdo, pgsql, zip, gd, dom, fileinfo, curl, iconv, imagick, bcmath, soap, opcache
-      env: 
-        update: true
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, pdo_pgsql, pdo, pgsql, zip, gd, dom, fileinfo, curl, iconv, imagick, bcmath, soap, opcache
+        env: 
+          update: true
 
-    - name: Set up MariaDB
-      run: |
-            sudo systemctl start mariadb
+      - name: Set up MariaDB
+        run: |
+              sudo systemctl start mariadb
 
-    - name: Copy .env.test.local
-      run: |
-        php -r " if (!file_exists('.env.test.local')) {
-          \$content = \"KERNEL_CLASS='App\\\\Kernel'\n\";
-          \$content .= \"APP_SECRET='\\\$ecretf0rt3st'\n\";
-          \$content .= \"SYMFONY_DEPRECATIONS_HELPER=999999\n\";
-          \$content .= \"PANTHER_APP_ENV=panther\n\";
-          \$content .= \"PANTHER_ERROR_SCREENSHOT_DIR=./var/error-screenshots\n\";
-          file_put_contents('.env.test.local', \$content); }"
-          
-          echo "DATABASE_URL=\"postgresql://postgres:${DB_PWD}@localhost:5432/critipixel?serverVersion=16&charset=utf8\"" >> .env.test.local
-          cat .env.test.local
+      - name: Copy .env.test.local
+        run: |
+          php -r " if (!file_exists('.env.test.local')) {
+            \$content = \"KERNEL_CLASS='App\\\\Kernel'\n\";
+            \$content .= \"APP_SECRET='\\\$ecretf0rt3st'\n\";
+            \$content .= \"SYMFONY_DEPRECATIONS_HELPER=999999\n\";
+            \$content .= \"PANTHER_APP_ENV=panther\n\";
+            \$content .= \"PANTHER_ERROR_SCREENSHOT_DIR=./var/error-screenshots\n\";
+            file_put_contents('.env.test.local', \$content); }"
+            
+            echo "DATABASE_URL=\"postgresql://postgres:${DB_PWD}@localhost:5432/critipixel?serverVersion=16&charset=utf8\"" >> .env.test.local
+            cat .env.test.local
 
-    - name: Wait for PostgreSQL to be ready
-      run: |
-        max_retries=20
-        retries=0
-        until pg_isready -h localhost -p 5432 -U postgres; do
-          retries=$((retries+1))
-          if [ $retries -ge $max_retries ]; then
-            echo "PostgreSQL is not ready after $max_retries attempts."
-            exit 1
-          fi
-          echo "Waiting for PostgreSQL... (Attempt $retries of $max_retries)"
-          sleep 2
-        done
-    
-    - name: Install Composer
-      run: composer install
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          max_retries=20
+          retries=0
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            retries=$((retries+1))
+            if [ $retries -ge $max_retries ]; then
+              echo "PostgreSQL is not ready after $max_retries attempts."
+              exit 1
+            fi
+            echo "Waiting for PostgreSQL... (Attempt $retries of $max_retries)"
+            sleep 2
+          done
       
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v3
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
-          
-    - name: Create database et migration
-      run: |
-        php bin/console doctrine:database:create --env=test --if-not-exists 
-        php bin/console doctrine:migration:migrate --env=test --no-interaction
-      
-    - name: Install fixture
-      run: php bin/console doctrine:fixtures:load --env=test --no-interaction
+      - name: Install Composer
+        run: composer install
+        
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+            
+      - name: Create database et migration
+        run: |
+          php bin/console doctrine:database:create --env=test --if-not-exists 
+          php bin/console doctrine:migration:migrate --env=test --no-interaction
+        
+      - name: Install fixture
+        run: php bin/console doctrine:fixtures:load --env=test --no-interaction
 
-    - name : install asset et compile
-      run: |
-        php bin/console importmap:install
-        php bin/console asset-map:compile
+      - name : install asset et compile
+        run: |
+          php bin/console importmap:install
+          php bin/console asset-map:compile
 
-    - name: controle statique avec phpstan
-      run: vendor/bin/phpstan analyse src --error-format=github
-      
-    - name: Execute tests (Unit and Feature tests) via PHPUnit
-      run: vendor/bin/phpunit
+      - name: controle statique avec phpstan
+        run: vendor/bin/phpstan analyse src --error-format=github
+        
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        run: vendor/bin/phpunit
 
