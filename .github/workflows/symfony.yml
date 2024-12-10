@@ -64,6 +64,12 @@ jobs:
             echo "DATABASE_URL=\"mysqlsql://root:${DB_PWD}@localhost:3306/ina_zoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4\"" >> .env.test.local
             cat .env.test.local
 
+      - name: Show MariaDB logs
+        run: |
+          ps aux | grep -i mariadb
+          tail -n 20 /var/log/mysql/error.log
+          mysqladmin ping -h localhost -u root --password=pwd --silent
+                
       - name: Wait for Maria to be ready
         run: |
           max_retries=20
