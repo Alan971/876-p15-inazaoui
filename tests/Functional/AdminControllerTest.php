@@ -115,11 +115,10 @@ class AdminControllerTest extends FunctionalTestCase
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = ConstForTest::getUploadedFile(true);      
         $form['media[file]'] = $uploadedFile->getPathname();
-        $formErrors = $crawler->filter('.form-error-message');
-foreach ($formErrors as $error) {
-    error_log('Form error: ' . $error->textContent);
-}
+
         $this->client->submit($form);
+        $requestData = $this->client->getRequest()->request->all();
+error_log('Request data: ' . print_r($requestData, true));
 
         $allMediaAfter = $this->getEntityManager()->getRepository(Media::class)->findAll();
         error_log('Count after submit: ' . count($allMediaAfter));
