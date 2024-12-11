@@ -118,9 +118,8 @@ class AdminControllerTest extends FunctionalTestCase
         $formErrors = $crawler->filter('.form-error-message');
 foreach ($formErrors as $error) {
     error_log('Form error: ' . $error->textContent);
-        $this->client->submit($form);
-
 }
+        $this->client->submit($form);
 
         $allMediaAfter = $this->getEntityManager()->getRepository(Media::class)->findAll();
         error_log('Count after submit: ' . count($allMediaAfter));
