@@ -55,7 +55,7 @@ jobs:
         run: |
           max_retries=20
           retries=0
-          until mysqladmin ping -h localhost --silent; do
+          until mysqladmin ping -h 127.0.0.1 --silent; do
             retries=$((retries+1))
             if [ $retries -ge $max_retries ]; then
               echo "MariaDB  is not ready after $max_retries attempts."
