@@ -57,13 +57,14 @@ class MediaController extends AbstractController
             }
             /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $file */
             $file = $form->get('file')->getData();
-            error_log('test : ' . $file);
             try {
+                error_log('test : ' . $file);
                 if ($file){
+                    error_log('test 2: ' . $file);
                     $uploadDirectory = $this->getParameter('UPLOADS_DIRECTORY');
                     $extension = $file->guessExtension();
                     $fileName = uniqid() . '.' . $extension;
-
+                    error_log('test3 : ' . $uploadDirectory);
                         if(is_string($uploadDirectory)){
                             error_log('Moving file to: ' . $uploadDirectory . '/' . $fileName);
                             $file->move($uploadDirectory, $fileName);   
