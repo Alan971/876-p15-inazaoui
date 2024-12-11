@@ -110,22 +110,22 @@ class AdminControllerTest extends FunctionalTestCase
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('Ajouter')->form();
-        $form['media[title]'] = ConstForTest::MEDIA_TITLE;
+        $form['media[title]'] = ConstForTest::MEDIA_TITLE_ADD;
         $form['media[user]'] = (string) ConstForTest::getInaId($this->getEntityManager());
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = ConstForTest::getUploadedFile(true);
         $form['media[file]'] = $uploadedFile->getPathname();
         $this->client->submit($form);
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-        $media = $this->getEntityManager()->getRepository(Media::class)->findOneBy(['title' => ConstForTest::MEDIA_TITLE]);
+        $media = $this->getEntityManager()->getRepository(Media::class)->findOneBy(['title' => ConstForTest::MEDIA_TITLE_ADD]);
         if ($media === null) {
             throw new \Exception('Media not found');
         }
-        self::assertEquals(ConstForTest::MEDIA_TITLE, $media->getTitle());
+        self::assertEquals(ConstForTest::MEDIA_TITLE_ADD, $media->getTitle());
 
         // Test DELETE média
         $this->client->request('GET', '/admin/media/delete/' . $media->getId());
-        //$this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
         $media = $this->getEntityManager()->getRepository(Media::class)->find($media->getId());
         self::assertNull($media);
 
@@ -134,22 +134,23 @@ class AdminControllerTest extends FunctionalTestCase
         $crawler = $this->client->request('GET', '/admin/media/add');
         $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Ajouter')->form();
-        $form['media[title]'] = ConstForTest::MEDIA_TITLE;
+        $form['media[title]'] = ConstForTest::MEDIA_TITLE_ADD;
         
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = ConstForTest::getUploadedFile(true);
         $form['media[file]'] = $uploadedFile->getPathname();
         $this->client->submit($form);
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-        $media = $this->getEntityManager()->getRepository(Media::class)->findOneBy(['title' => ConstForTest::MEDIA_TITLE]);
+        $media = $this->getEntityManager()->getRepository(Media::class)->findOneBy(['title' => ConstForTest::MEDIA_TITLE_ADD]);
         if ($media === null) {
             throw new \Exception('Media not found');
         }
-        self::assertEquals(ConstForTest::MEDIA_TITLE, $media->getTitle());
+        self::assertEquals(ConstForTest::MEDIA_TITLE_ADD, $media->getTitle());
         // Test DELETE média
+        $mediaId = $media->getId();
         $this->client->request('GET', '/admin/media/delete/' . $media->getId());
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-        $media = $this->getEntityManager()->getRepository(Media::class)->find($media->getId());
+        $media = $this->getEntityManager()->getRepository(Media::class)->find($mediaId);
         self::assertNull($media);
     }
 

@@ -13,6 +13,7 @@ class ConstForTest
     const IMGPATH = __DIR__ . '/imgTest/test1.png';
     const IMGNAME = 'test1.png';
     const MEDIA_TITLE = 'Titre 1';
+    const MEDIA_TITLE_ADD = 'Titre test';
     const DESCRIPTION = 'ceci est un test de description';
     const ALBUM_NAME = 'Album1';
     const USERNAME = 'Ina';
