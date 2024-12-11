@@ -48,7 +48,7 @@ class AdminControllerTest extends FunctionalTestCase
         if ($album === null) {
             throw new \Exception('Album not found');
         }
-        self::assertEquals('test', $album->getName());
+        self::assertEquals(ConstForTest::ALBUM_NAME, $album->getName());
         // test de DELETE NON CONCLUANT quand il contient des medias
         $media = new Media;
         $media->setTitle(ConstForTest::MEDIA_TITLE);
@@ -61,7 +61,7 @@ class AdminControllerTest extends FunctionalTestCase
         if ($album === null) {
             throw new \Exception('Album not found : Test is Not correct');
         }
-        self::assertEquals('test', $album->getName());
+        self::assertEquals(ConstForTest::ALBUM_NAME, $album->getName());
         //suppression du media créé
         /** @var Media $media */
         $media = $this->getEntityManager()->getRepository(Media::class)->find($media->getId());
@@ -79,9 +79,10 @@ class AdminControllerTest extends FunctionalTestCase
         $album = $this->getEntityManager()->getRepository(Album::class)->findOneBy(['name' => ConstForTest::ALBUM_NAME . 'Modif']); 
 
         // test de DELETE réussi
+        $albumId = $album->getId();
         $this->client->request('GET', '/admin/album/delete/' . $album->getId());
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-        $album = $this->getEntityManager()->getRepository(Album::class)->findOneBy(['name' => ConstForTest::ALBUM_NAME . 'Modif']);
+        $album = $this->getEntityManager()->getRepository(Album::class)->findOneBy(['name' => $albumId . 'Modif']);
         self::assertNull($album);
     }
 
