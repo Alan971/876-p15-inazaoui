@@ -41,8 +41,8 @@ class EntityTest extends FunctionalTestCase
         self::assertEquals(ConstForTest::DESCRIPTION, $user->getDescription());
 
         /** @var User $user */
-        $user = $this->getEntityManager()->getRepository(User::class)->findOneById(ConstForTest::USERNAME_ID);
-        self::assertEquals(ConstForTest::USERNAME_ID, $user->getId());
+        $user = $this->getEntityManager()->getRepository(User::class)->findOneById(ConstForTest::getInaId($this->getEntityManager()));
+        self::assertEquals(ConstForTest::getInaId($this->getEntityManager()), $user->getId());
         self::assertNotNull($user->getMedias());
 
     }

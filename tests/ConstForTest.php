@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ConstForTest
@@ -19,7 +21,7 @@ class ConstForTest
     const NEW_PASSWORD = 'testNew';
     const NEW_USERNAME = 'NewName';
     const USER_MAIL_ADRESS = 'abc@gmail.com';
-    const USERNAME_ID = 685;
+
 
     public static function getUploadedFile(Bool $isFileExist ): UploadedFile
     {
@@ -35,6 +37,14 @@ class ConstForTest
             true            // Si le fichier existe réellement (mettre true ou false selon le test)
         );
         
+    }
+    public static function getInaId(EntityManagerInterface $entityManager): int
+    {
+        $user = $entityManager->getRepository(User::class)->findOneBy(['name' => self::USERNAME]);
+        if ($user === null) {
+            throw new \Exception('User not found');
+        }
+        return $user->getId();
     }
 
 }
