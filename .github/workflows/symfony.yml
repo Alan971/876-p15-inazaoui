@@ -99,8 +99,6 @@ jobs:
       - name: Install fixture
         run: php bin/console doctrine:fixtures:load --env=test --no-interaction
 
-
-
       - name: controle statique avec phpstan
         run: vendor/bin/phpstan analyse src --error-format=github
         
