@@ -116,16 +116,15 @@ class AdminControllerTest extends FunctionalTestCase
         $uploadedFile = ConstForTest::getUploadedFile(true);      
         $form['media[file]'] = $uploadedFile->getPathname();
 
-        $uploadedFile = ConstForTest::getUploadedFile(true);
-error_log('Uploaded file path: ' . $uploadedFile->getPathname());
-error_log('File exists: ' . (file_exists($uploadedFile->getPathname()) ? 'yes' : 'no'));
-error_log('File size: ' . filesize($uploadedFile->getPathname()));
-        $allMediaBefore = $this->getEntityManager()->getRepository(Media::class)->findAll();
-        error_log('Count before submit: ' . count($allMediaBefore));
         $this->client->submit($form);
+        $formErrors = $crawler->filter('.form-error-message');
+foreach ($formErrors as $error) {
+    error_log('Form error: ' . $error->textContent);
+}
+
         $allMediaAfter = $this->getEntityManager()->getRepository(Media::class)->findAll();
         error_log('Count after submit: ' . count($allMediaAfter));
-        
+
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
         $this->getEntityManager()->flush();
         $this->getEntityManager()->clear();
