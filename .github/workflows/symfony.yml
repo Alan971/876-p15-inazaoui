@@ -48,7 +48,7 @@ jobs:
 
       - name: Test database connection
         run: |
-          mysql -h 127.0.0.1 -P 3306 -u root -p pwd -e "SHOW DATABASES;"
+          mysql -h 127.0.0.1 -P 3306 -u root -ppwd -e "SHOW DATABASES;"
 
       - name: Show MariaDB logs
         run: |
