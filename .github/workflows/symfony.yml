@@ -98,7 +98,10 @@ jobs:
         
       - name: Install fixture
         run: php bin/console doctrine:fixtures:load --env=test --no-interaction
-
+      
+      - name: Install Symfony Importmap
+        run: composer require symfony/importmap
+      
       - name : install asset et compile
         run: |
           php bin/console importmap:install
