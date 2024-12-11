@@ -118,7 +118,7 @@ class AdminControllerTest extends FunctionalTestCase
 
         $this->client->submit($form);
         $requestData = $this->client->getRequest()->request->all();
-error_log('Request data: ' . print_r($requestData, true));
+        error_log('Request data: ' . print_r($requestData, true));
 
         $allMediaAfter = $this->getEntityManager()->getRepository(Media::class)->findAll();
         error_log('Count after submit: ' . count($allMediaAfter));
