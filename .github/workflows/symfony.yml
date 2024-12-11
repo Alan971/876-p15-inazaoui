@@ -18,11 +18,6 @@ jobs:
   symfony-tests:
     runs-on: ubuntu-latest
     
-    env:
-      DB_PWD: ${{ secrets.BDDMOTDEPASSE }}
-      DATABASE_URL: "mysql://root:pwd@localhost:3306/ina_zaoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4"
-      # DB_PWD: password
-      # DATABASE_URL: "mysql://root:${{env.DB_PWD}}@mysql:3306/ina_zaoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4"
     services:
       mariadb:
         image: mariadb:10.5
@@ -53,7 +48,7 @@ jobs:
 
       - name: Test database connection
         run: |
-          mysql -h localhost -P 3306 -u root -p pwd -e "SHOW DATABASES;"
+          mysql -h 127.0.0.1 -P 3306 -u root -p pwd -e "SHOW DATABASES;"
 
       - name: Show MariaDB logs
         run: |
