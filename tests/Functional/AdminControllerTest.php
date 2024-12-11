@@ -117,10 +117,12 @@ class AdminControllerTest extends FunctionalTestCase
         $form['media[file]'] = $uploadedFile->getPathname();
         $this->client->submit($form);
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
         $media = $this->getEntityManager()->getRepository(Media::class)->findOneBy(['title' => ConstForTest::MEDIA_TITLE_ADD]);
-        // if ($media === null) {
-        //     throw new \Exception('Media not found');
-        // }
+        if ($media === null) {
+            throw new \Exception('Media not found');
+        }
         self::assertEquals(ConstForTest::MEDIA_TITLE_ADD, $media->getTitle());
 
         // Test DELETE média
