@@ -124,9 +124,7 @@ class AdminControllerTest extends FunctionalTestCase
         error_log('Count after submit: ' . count($allMediaAfter));
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-        $this->getEntityManager()->flush();
-        $this->getEntityManager()->clear();
-        sleep(1);
+
         $media = $this->getEntityManager()->getRepository(Media::class)->findOneBy(['title' => ConstForTest::MEDIA_TITLE_ADD]);
         if ($media === null) {
             throw new \Exception('Media not found');
