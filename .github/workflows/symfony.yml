@@ -50,11 +50,6 @@ jobs:
         run: |
           mysql -h 127.0.0.1 -P 3306 -u root -ppwd -e "SHOW DATABASES;"
 
-      - name: Show MariaDB logs
-        run: |
-          ps aux | grep -i mariadb
-          tail -n 20 /var/log/mysql/error.log
-          mysqladmin ping -h localhost -u root --password=pwd --silent
                 
       - name: Wait for Maria to be ready
         run: |
