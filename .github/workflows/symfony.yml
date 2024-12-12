@@ -22,6 +22,7 @@ jobs:
       mariadb:
         image: mariadb:10.5
         env:
+          DATABASE_URL: mysql://root:pwd@127.0.0.1:3306/ina_zoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4
           MYSQL_ROOT_PASSWORD: pwd
           MYSQL_DATABASE: ina_zaoui
 
