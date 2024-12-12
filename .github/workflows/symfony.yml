@@ -87,7 +87,7 @@ jobs:
           chmod -R 777 public/uploads
           
       - name: Install Composer
-        run: composer install
+        run: composer install --no-scripts
         
       - name: Cache Composer packages
         id: composer-cache
