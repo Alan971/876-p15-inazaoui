@@ -39,7 +39,7 @@ class ConstForTest
         );
         
     }
-    public static function getInaId(EntityManagerInterface $entityManager): int
+    public static function getInaId(EntityManagerInterface $entityManager): ?int
     {
         $user = $entityManager->getRepository(User::class)->findOneBy(['name' => self::USERNAME]);
         if ($user === null) {
