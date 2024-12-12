@@ -78,7 +78,11 @@ jobs:
             echo "DATABASE_URL=\"mysql://root:pwd@127.0.0.1:3306/ina_zoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4\"" >> .env.test.local
             cat .env.test.local
                     
-      
+      - name: Create and set permissions for uploads directory
+        run: |
+          mkdir -p public/uploads
+          chmod -R 777 public/uploads
+          
       - name: Install Composer
         run: composer install
         

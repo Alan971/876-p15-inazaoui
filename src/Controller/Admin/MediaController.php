@@ -57,8 +57,7 @@ class MediaController extends AbstractController
             }
             /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $file */
             $file = $form->get('file')->getData();
-            try {
-                
+            try {   
                 if ($file){
                     error_log('test 2: ' . $file);
                     $uploadDirectory = $this->getParameter('UPLOADS_DIRECTORY');
