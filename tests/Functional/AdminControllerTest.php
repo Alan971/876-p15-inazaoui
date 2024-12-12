@@ -124,9 +124,6 @@ class AdminControllerTest extends FunctionalTestCase
         }
         self::assertEquals(ConstForTest::MEDIA_TITLE_ADD, $media->getTitle());
         $mediaId = $media->getId();
-        error_log('Media id : ' . $mediaId);
-        error_log('titre : ' . $media->getTitle());
-        error_log('path : ' . $media->getPath());
         // Test DELETE média
         $this->client->request('GET', '/admin/media/delete/' . $mediaId);
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());

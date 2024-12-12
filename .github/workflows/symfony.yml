@@ -75,7 +75,6 @@ jobs:
             \$content .= \"PANTHER_ERROR_SCREENSHOT_DIR=./var/error-screenshots\n\";
             \$content .= \"UPLOADS_DIRECTORY=public/uploads/\n\";
             file_put_contents('.env.test.local', \$content); }"
-            
             echo "DATABASE_URL=\"mysql://root:pwd@127.0.0.1:3306/ina_zoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4\"" >> .env.test.local
             cat .env.test.local
                     
