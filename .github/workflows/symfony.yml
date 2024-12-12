@@ -22,7 +22,6 @@ jobs:
       mariadb:
         image: mariadb:10.5
         env:
-          DATABASE_URL: mysql://root:pwd@127.0.0.1:3306/ina_zoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4
           MYSQL_ROOT_PASSWORD: pwd
           MYSQL_DATABASE: ina_zaoui
 
@@ -51,6 +50,9 @@ jobs:
         run: |
           mysql -h 127.0.0.1 -P 3306 -u root -ppwd -e "SHOW DATABASES;"
 
+      - name: Set DATABASE_URL
+        run: echo "mysql://root:pwd@127.0.0.1:3306/ina_zoui?serverVersion=10.3.39-MariaDB&charset=utf8mb4" >> $GITHUB_ENV
+        
                 
       - name: Wait for Maria to be ready
         run: |
