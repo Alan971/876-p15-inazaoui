@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional;
+namespace App\Tests\Functional\RepositoryTest;
 
 use App\Tests\Functional\FunctionalTestCase;
 use App\Entity\User;
