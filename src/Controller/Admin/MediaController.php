@@ -59,16 +59,11 @@ class MediaController extends AbstractController
             $file = $form->get('file')->getData();
             try {   
                 if ($file){
-                    error_log('test 2: ' . $file);
                     $uploadDirectory = $this->getParameter('UPLOADS_DIRECTORY');
-                    error_log('test : ' . $file);
                     $extension = $file->guessExtension();
-                    error_log('test3 : ' . is_string($uploadDirectory));
                     $fileName = uniqid() . '.' . $extension;
                         if(is_string($uploadDirectory)){
-                            error_log('Moving file to: ' . $uploadDirectory . '/' . $fileName);
                             $file->move($uploadDirectory, $fileName);   
-                            error_log('File moved successfully.');
                             $media->setPath($uploadDirectory . $fileName);
                             $em->persist($media);
                             $em->flush();

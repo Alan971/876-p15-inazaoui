@@ -115,14 +115,7 @@ class AdminControllerTest extends FunctionalTestCase
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = ConstForTest::getUploadedFile(true);      
         $form['media[file]'] = $uploadedFile->getPathname();
-
         $this->client->submit($form);
-        $requestData = $this->client->getRequest()->request->all();
-        error_log('Request data: ' . print_r($requestData, true));
-
-        $allMediaAfter = $this->getEntityManager()->getRepository(Media::class)->findAll();
-        error_log('Count after submit: ' . count($allMediaAfter));
-
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
 
         $media = $this->getEntityManager()->getRepository(Media::class)->findOneBy(['title' => ConstForTest::MEDIA_TITLE_ADD]);
@@ -130,11 +123,14 @@ class AdminControllerTest extends FunctionalTestCase
             throw new \Exception('Media not found');
         }
         self::assertEquals(ConstForTest::MEDIA_TITLE_ADD, $media->getTitle());
-
+        $mediaId = $media->getId();
+        error_log('Media id : ' . $mediaId);
+        error_log('titre : ' . $media->getTitle());
+        error_log('path : ' . $media->getPath());
         // Test DELETE média
-        $this->client->request('GET', '/admin/media/delete/' . $media->getId());
+        $this->client->request('GET', '/admin/media/delete/' . $mediaId);
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-        $media = $this->getEntityManager()->getRepository(Media::class)->find($media->getId());
+        $media = $this->getEntityManager()->getRepository(Media::class)->find($mediaId);
         self::assertNull($media);
 
         // Test ADD  média en role user
