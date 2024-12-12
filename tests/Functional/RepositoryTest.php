@@ -10,7 +10,7 @@ use App\Entity\Media;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Tests\ConstForTest;
 
-class RepositoyTest extends FunctionalTestCase
+class RepositoryTest extends FunctionalTestCase
 {
     public function testUserRepo(): void
     {
