@@ -23,7 +23,6 @@ class ConstForTest
     const NEW_USERNAME = 'NewName';
     const USER_MAIL_ADRESS = 'abc@gmail.com';
 
-
     public static function getUploadedFile(Bool $isFileExist ): UploadedFile
     {
         $imgPath = "fichierInvalide";
