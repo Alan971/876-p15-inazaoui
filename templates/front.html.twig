@@ -24,7 +24,7 @@
                     <a href="{{ path('home') }}">
                         <img src="{{ asset('images/logo.png') }}" alt="Ina Zaoui">
                     </a>
-                     {% if app.user %} <p class="nav-link">Bienvenue {{ app.user.name }} </p> {% endif %}
+                     {# {% if app.user %} <p class="nav-link">Bienvenue {{ app.user.name }} </p> {% endif %} #}
                     <ul class="nav">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('guests') }}">Invités</a>
@@ -34,6 +34,11 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('about') }}">Qui suis-je ?</a>
+                        </li>
+                        <li class="nav-item">
+                            {% if app.user %}
+                                <a class="nav-link" href="{{ path('admin_media_index') }}">Administration</a>
+                             {% endif %}
                         </li>
                         <li class="nav-item">
                             {% if app.user %}
