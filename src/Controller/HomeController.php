@@ -32,6 +32,7 @@ class HomeController extends AbstractController
             $maxGuestsPerPage,
             $maxGuestsPerPage * ($page - 1)
         );
+
         $total = $em->getRepository(User::class)->count([]);
         return $this->render('front/guests.html.twig', [
             'guests' => $guests,

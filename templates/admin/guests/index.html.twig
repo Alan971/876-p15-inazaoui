@@ -28,7 +28,7 @@
                     <p> {{ guest.roles|join(', ') }}</p>
                 </td>
                 <td>
-                    <a href="{{ path('portfolio', {id: guest.id}) }}" class="btn btn-primary">Visualiser</a>
+                    <a href="{{ path('guest', {id: guest.id}) }}" class="btn btn-primary">Visualiser</a>
                 </td>
             </tr>
                 {% endfor %}
